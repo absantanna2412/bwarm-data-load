@@ -1,15 +1,18 @@
+TRUNCATE TABLE work_recordings;
 
-TRUNCATE TABLE WORK_RECORDINGS;
+SELECT to_char(current_timestamp, 'DD/MM/YYYY HH24:MI:SS.MS');
 
-SELECT @SNAPSHOT_ID := MAX(snapshotid) FROM SNAPSHOTS;
+\copy work_recordings FROM 'worksrecordings.tsv' WITH (FORMAT csv, DELIMITER E'\t', NULL '', HEADER false, QUOTE '"', ESCAPE '\', FORCE_NULL ());
 
-SELECT NOW() FROM DUAL;
+DO $$
+  DECLARE
+    snapshot_id INT;
+  BEGIN
+    SELECT MAX(snapshot_id) INTO snapshot_id FROM snapshots;
 
-LOAD DATA INFILE 'worksrecordings.tsv'
-    INTO TABLE WORK_RECORDINGS
-    FIELDS TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '"' ESCAPED BY '\\'
-    SET snapshotid= @SNAPSHOT_ID
-;
+    UPDATE work_recordings
+    SET snapshot_id = snapshot_id
+      WHERE snapshot_id IS NULL;
+  END $$;
 
-SELECT NOW() FROM DUAL;
-
+SELECT to_char(current_timestamp, 'DD/MM/YYYY HH24:MI:SS.MS');

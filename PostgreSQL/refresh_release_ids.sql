@@ -1,15 +1,18 @@
+TRUNCATE TABLE release_identifiers;
 
-TRUNCATE TABLE RELEASE_IDENTIFIERS;
+SELECT to_char(current_timestamp, 'DD/MM/YYYY HH24:MI:SS.MS');
 
-SELECT @SNAPSHOT_ID := MAX(snapshotid) FROM SNAPSHOTS;
+\copy release_identifiers FROM 'releaseidentifiers.tsv' WITH (FORMAT csv, DELIMITER E'\t', NULL '', HEADER false, QUOTE '"', ESCAPE '\', FORCE_NULL ());
 
+DO $$
+  DECLARE
+    snapshot_id INT;
+  BEGIN
+    SELECT MAX(snapshot_id) INTO snapshot_id FROM snapshots;
 
-SELECT NOW() FROM DUAL;
+    UPDATE release_identifiers
+    SET snapshot_id = snapshot_id
+      WHERE snapshot_id IS NULL;
+  END $$;
 
-LOAD DATA INFILE 'releaseidentifiers.tsv'
-    INTO TABLE RELEASE_IDENTIFIERS
-    FIELDS TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '"' ESCAPED BY '\\'
-    SET snapshotid= @SNAPSHOT_ID
-;
-
-SELECT NOW() FROM DUAL;
+SELECT to_char(current_timestamp, 'DD/MM/YYYY HH24:MI:SS.MS');

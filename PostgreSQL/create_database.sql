@@ -1,162 +1,163 @@
-DROP TABLE IF EXISTS "SNAPSHOTS";
-DROP TABLE IF EXISTS "PUBLIC_DB_STATS";
-DROP TABLE IF EXISTS "WORKS";
-DROP TABLE IF EXISTS "ALTERNATIVE_WORK_TITLES";
-DROP TABLE IF EXISTS "WORK_IDENTIFIERS";
-DROP TABLE IF EXISTS "PARTIES";
-DROP TABLE IF EXISTS "WORK_RIGHT_SHARES";
-DROP TABLE IF EXISTS "RECORDINGS";
-DROP TABLE IF EXISTS "ALTERNATIVE_RECORDING_TITLES";
-DROP TABLE IF EXISTS "RECORDING_IDENTIFIERS";
-DROP TABLE IF EXISTS "RELEASES";
-DROP TABLE IF EXISTS "RELEASE_IDENTIFIERS";
-DROP TABLE IF EXISTS "WORK_RECORDINGS";
-DROP TABLE IF EXISTS "UNCLAIMED_WORKS";
+DROP TABLE IF EXISTS alternative_work_titles;
+DROP TABLE IF EXISTS work_identifiers;
+DROP TABLE IF EXISTS work_right_shares;
+DROP TABLE IF EXISTS alternative_recording_titles;
+DROP TABLE IF EXISTS recording_identifiers;
+DROP TABLE IF EXISTS release_identifiers;
+DROP TABLE IF EXISTS work_recordings;
+DROP TABLE IF EXISTS unclaimed_works;
+DROP TABLE IF EXISTS releases;
+DROP TABLE IF EXISTS recordings;
+DROP TABLE IF EXISTS parties;
+DROP TABLE IF EXISTS works;
+DROP TABLE IF EXISTS snapshots;
 
-CREATE TABLE "SNAPSHOTS" (
-  snapshotid SERIAL PRIMARY KEY,
-  created_date DATE
+CREATE TABLE snapshots (
+  snapshot_id SERIAL PRIMARY KEY,
+  created_date TIMESTAMP
 );
 
-CREATE TABLE "WORKS" (
-  FeedProvidersWorkId VARCHAR(3000) PRIMARY KEY,
-  ISWC VARCHAR(11),
-  WorkTitle TEXT,
-  OpusNumber VARCHAR(3000),
-  ComposerCatalogNumber VARCHAR(3000),
-  NominalDuration VARCHAR(3000),
-  HasRightsInDispute VARCHAR(6),
-  TerritoryOfPublicDomain TEXT,
-  IsArrangementOfTraditionalWork VARCHAR(6),
-  AlternativeWorkForUsStatutoryReversion VARCHAR(3000),
-  UsStatutoryReversionDate VARCHAR(100),
-  snapshotid INT
+CREATE TABLE works (
+  feed_providers_work_id VARCHAR(900) PRIMARY KEY,
+  iswc VARCHAR(11),
+  work_title TEXT,
+  opus_number VARCHAR(900),
+  composer_catalog_number VARCHAR(900),
+  nominal_duration VARCHAR(900),
+  has_rights_in_dispute VARCHAR(6),
+  territory_of_public_domain TEXT,
+  is_arrangement_of_traditional_work VARCHAR(6),
+  alternative_work_for_us_statutory_reversion VARCHAR(900),
+  us_statutory_reversion_date VARCHAR(100),
+  snapshot_id INTEGER REFERENCES snapshots(snapshot_id)
 );
 
-CREATE TABLE "ALTERNATIVE_WORK_TITLES" (
-  FeedProvidersWorkAlternativeTitleId VARCHAR(3000) PRIMARY KEY,
-  FeedProvidersWorkId VARCHAR(3000),
-  AlternativeTitle TEXT,
-  LanguageAndScriptCode VARCHAR(3000),
-  TitleType VARCHAR(3000),
-  snapshotid INT
+CREATE TABLE alternative_work_titles (
+  feed_providers_work_alternative_title_id VARCHAR(900) PRIMARY KEY,
+  feed_providers_work_id VARCHAR(900) REFERENCES works(feed_providers_work_id),
+  alternative_title TEXT,
+  language_and_script_code VARCHAR(900),
+  title_type VARCHAR(900),
+  snapshot_id INTEGER REFERENCES snapshots(snapshot_id)
 );
 
-CREATE TABLE "WORK_IDENTIFIERS" (
-  FeedProvidersWorkProprietaryIdentifierId VARCHAR(3000) PRIMARY KEY,
-  FeedProvidersWorkId VARCHAR(3000),
-  Identifier VARCHAR(3000),
-  FeedProvidersAllocatingPartyId VARCHAR(3000),
-  snapshotid INT
+CREATE TABLE work_identifiers (
+  feed_providers_work_proprietary_identifier_id VARCHAR(900) PRIMARY KEY,
+  feed_providers_work_id VARCHAR(900) REFERENCES works(feed_providers_work_id),
+  identifier VARCHAR(900),
+  feed_providers_allocating_party_id VARCHAR(900),
+  snapshot_id INTEGER REFERENCES snapshots(snapshot_id)
 );
 
-CREATE TABLE "PARTIES" (
-  FeedProvidersPartyId VARCHAR(3000) PRIMARY KEY,
-  ISNI VARCHAR(15),
-  IpiNameNumber INTEGER,
-  CisacSocietyId VARCHAR(3),
-  DPID VARCHAR(100),
-  FullName TEXT,
-  NamesBeforeKeyName TEXT,
-  KeyName TEXT,
-  NamesAfterKeyName TEXT,
-  snapshotid INT
+CREATE TABLE parties (
+  feed_providers_party_id VARCHAR(900) PRIMARY KEY,
+  isni VARCHAR(15),
+  ipi_name_number BIGINT,
+  cisac_society_id VARCHAR(3),
+  dpid VARCHAR(100),
+  full_name TEXT,
+  names_before_key_name TEXT,
+  key_name TEXT,
+  names_after_key_name TEXT,
+  snapshot_id INTEGER REFERENCES snapshots(snapshot_id)
 );
 
-CREATE TABLE "WORK_RIGHT_SHARES" (
-  FeedProvidersWorkRightShareId VARCHAR(3000) PRIMARY KEY,
-  FeedProvidersWorkId VARCHAR(3000),
-  FeedProvidersPartyId VARCHAR(3000),
-  PartyRole VARCHAR(100),
-  RightSharePercentage FLOAT,
-  RightShareType VARCHAR(100),
-  RightsType VARCHAR(100),
-  ValidityStartDate VARCHAR(10),
-  ValidityEndDate VARCHAR(10),
-  FeedProvidersParentWorkRightShareId VARCHAR(3000),
-  TerritoryCode VARCHAR(3000),
-  UseType VARCHAR(3000),
-  snapshotid INT
+CREATE TABLE work_right_shares (
+  feed_providers_work_right_share_id VARCHAR(900) PRIMARY KEY,
+  feed_providers_work_id VARCHAR(900) REFERENCES works(feed_providers_work_id),
+  feed_providers_party_id VARCHAR(900) REFERENCES parties(feed_providers_party_id),
+  party_role VARCHAR(100),
+  right_share_percentage REAL,
+  right_share_type VARCHAR(100),
+  rights_type VARCHAR(100),
+  validity_start_date VARCHAR(10),
+  validity_end_date VARCHAR(10),
+  feed_providers_parent_work_right_share_id VARCHAR(900),
+  territory_code VARCHAR(900),
+  use_type VARCHAR(900),
+  snapshot_id INTEGER REFERENCES snapshots(snapshot_id)
 );
 
-CREATE TABLE "RECORDINGS" (
-  FeedProvidersRecordingId VARCHAR(3000) PRIMARY KEY,
-  ISRC VARCHAR(12),
-  RecordingTitle TEXT,
-  RecordingSubTitle TEXT,
-  DisplayArtistName TEXT,
-  DisplayArtistISNI VARCHAR(16),
-  PLine VARCHAR(3000),
-  Duration  VARCHAR(100),
-  FeedProvidersReleaseId VARCHAR(3000),
-  StudioProducerName TEXT,
-  StudioProducerId VARCHAR(3000),
-  OriginalDataProviderName VARCHAR(3000),
-  OriginalDataProviderDPID VARCHAR(3000),
-  IsDataProvidedAsReceived VARCHAR(6),
-  snapshotid INT
+CREATE TABLE recordings (
+  feed_providers_recording_id VARCHAR(900) PRIMARY KEY,
+  isrc VARCHAR(12),
+  recording_title TEXT,
+  recording_sub_title TEXT,
+  display_artist_name TEXT,
+  display_artist_isni VARCHAR(16),
+  pline VARCHAR(900),
+  duration VARCHAR(100),
+  feed_providers_release_id VARCHAR(900),
+  studio_producer_name TEXT,
+  studio_producer_id VARCHAR(900),
+  original_data_provider_name VARCHAR(900),
+  original_data_provider_dpid VARCHAR(900),
+  is_data_provided_as_received VARCHAR(6),
+  snapshot_id INTEGER REFERENCES snapshots(snapshot_id)
 );
 
-CREATE TABLE "ALTERNATIVE_RECORDING_TITLES" (
-  FeedProvidersRecordingAlternativeTitleId VARCHAR(3000) PRIMARY KEY,
-  FeedProvidersRecordingId VARCHAR(3000),
-  AlternativeTitle TEXT,
-  LanguageAndScriptCode VARCHAR(3000),
-  TitleType VARCHAR(3000),
-  snapshotid INT
+CREATE TABLE alternative_recording_titles (
+  feed_providers_recording_alternative_title_id VARCHAR(900) PRIMARY KEY,
+  feed_providers_recording_id VARCHAR(900) REFERENCES recordings(feed_providers_recording_id),
+  alternative_title TEXT,
+  language_and_script_code VARCHAR(900),
+  title_type VARCHAR(900),
+  snapshot_id INTEGER REFERENCES snapshots(snapshot_id)
 );
 
-CREATE TABLE "RECORDING_IDENTIFIERS" (
-  FeedProvidersRecordingProprietaryIdentifierId VARCHAR(3000) PRIMARY KEY,
-  FeedProvidersRecordingId VARCHAR(3000),
-  Identifier VARCHAR(3000),
-  FeedProvidersAllocatingPartyId VARCHAR(3000),
-  snapshotid INT
+CREATE TABLE recording_identifiers (
+  feed_providers_recording_proprietary_identifier_id VARCHAR(900) PRIMARY KEY,
+  feed_providers_recording_id VARCHAR(900) REFERENCES recordings(feed_providers_recording_id),
+  identifier VARCHAR(900),
+  feed_providers_allocating_party_id VARCHAR(900),
+  snapshot_id INTEGER REFERENCES snapshots(snapshot_id)
 );
 
-CREATE TABLE "RELEASES" (
-  FeedProvidersReleaseId VARCHAR(3000) PRIMARY KEY,
-  ICPN VARCHAR(15),
-  ReleaseTitle TEXT,
-  ReleaseSubTitle TEXT,
-  DisplayArtistName TEXT,
-  DisplayArtistISNI VARCHAR(16),
-  LabelName VARCHAR(3000),
-  ReleaseDate VARCHAR(10),
-  OriginalDataProviderName VARCHAR(3000),
-  OriginalDataProviderDPID VARCHAR(3000),
-  IsDataProvidedAsReceived VARCHAR(6),
-  snapshotid INT
+CREATE TABLE releases (
+  feed_providers_release_id VARCHAR(900) PRIMARY KEY,
+  icpn VARCHAR(15),
+  release_title TEXT,
+  release_sub_title TEXT,
+  display_artist_name TEXT,
+  display_artist_isni VARCHAR(16),
+  label_name VARCHAR(900),
+  release_date VARCHAR(10),
+  original_data_provider_name VARCHAR(900),
+  original_data_provider_dpid VARCHAR(900),
+  is_data_provided_as_received VARCHAR(6),
+  snapshot_id INTEGER REFERENCES snapshots(snapshot_id)
 );
 
-CREATE TABLE "RELEASE_IDENTIFIERS" (
-  FeedProvidersReleaseProprietaryIdentifierId VARCHAR(3000) PRIMARY KEY,
-  FeedProvidersReleaseId VARCHAR(3000),
-  Identifier VARCHAR(3000),
-  FeedProvidersAllocatingPartyId VARCHAR(3000),
-  snapshotid INT
+CREATE TABLE release_identifiers (
+  feed_providers_release_proprietary_identifier_id VARCHAR(900) PRIMARY KEY,
+  feed_providers_release_id VARCHAR(900) REFERENCES releases(feed_providers_release_id),
+  identifier VARCHAR(900),
+  feed_providers_allocating_party_id VARCHAR(900),
+  snapshot_id INTEGER REFERENCES snapshots(snapshot_id)
 );
 
-CREATE TABLE "WORK_RECORDINGS" (
-  FeedProvidersLinkId VARCHAR(3000) PRIMARY KEY,
-  FeedProvidersWorkId VARCHAR(3000),
-  FeedProvidersRecordingId VARCHAR(3000),
-  snapshotid INT
+CREATE TABLE work_recordings (
+  feed_providers_link_id VARCHAR(900) PRIMARY KEY,
+  feed_providers_work_id VARCHAR(900) REFERENCES works(feed_providers_work_id),
+  feed_providers_recording_id VARCHAR(900) REFERENCES recordings(feed_providers_recording_id),
+  snapshot_id INTEGER REFERENCES snapshots(snapshot_id)
 );
 
-CREATE TABLE "UNCLAIMED_WORKS" (
-  FeedProvidersRightShareId VARCHAR(3000) PRIMARY KEY,
-  FeedProvidersRecordingId VARCHAR(3000),
-  FeedProvidersWorkId VARCHAR(3000),
-  ISRC  VARCHAR(11),
-  DspRecordingId  VARCHAR(3000),
-  RecordingTitle TEXT,
-  RecordingSubTitle TEXT,
-  AlternativeRecordingTitle TEXT,
-  DisplayArtistName TEXT,
-  DisplayArtistISNI VARCHAR(16),
-  Duration VARCHAR(100),
-  UnclaimedPercentage FLOAT,
-  PercentileForPrioritisation INTEGER,
-  snapshotid INT
+CREATE TABLE unclaimed_works (
+  feed_providers_right_share_id VARCHAR(900) PRIMARY KEY,
+  feed_providers_recording_id VARCHAR(900) REFERENCES recordings(feed_providers_recording_id),
+  feed_providers_work_id VARCHAR(900) REFERENCES works(feed_providers_work_id),
+  isrc VARCHAR(11),
+  dsp_recording_id VARCHAR(900),
+  recording_title TEXT,
+  recording_sub_title TEXT,
+  alternative_recording_title TEXT,
+  display_artist_name TEXT,
+  display_artist_isni VARCHAR(16),
+  duration VARCHAR(100),
+  unclaimed_percentage REAL,
+  percentile_for_prioritisation INTEGER,
+  snapshot_id INTEGER REFERENCES snapshots(snapshot_id)
 );
+
+insert into snapshots (created_date) values (current_timestamp);

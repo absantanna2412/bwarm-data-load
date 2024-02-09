@@ -1,17 +1,18 @@
+TRUNCATE TABLE work_right_shares;
 
-TRUNCATE TABLE WORK_RIGHT_SHARES;
+SELECT to_char(current_timestamp, 'DD/MM/YYYY HH24:MI:SS.MS');
 
-SELECT @SNAPSHOT_ID := MAX(snapshotid) FROM SNAPSHOTS;
+\copy work_right_shares FROM 'workrightshares.tsv' WITH (FORMAT csv, DELIMITER E'\t', NULL '', HEADER false, QUOTE '"', ESCAPE '\', FORCE_NULL ());
 
-SELECT NOW() FROM DUAL;
+DO $$
+  DECLARE
+    snapshot_id INT;
+  BEGIN
+    SELECT MAX(snapshot_id) INTO snapshot_id FROM snapshots;
 
+    UPDATE work_right_shares
+    SET snapshot_id = snapshot_id
+      WHERE snapshot_id IS NULL;
+  END $$;
 
-LOAD DATA INFILE 'workrightshares.tsv'
-    INTO TABLE WORK_RIGHT_SHARES
-    FIELDS TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '"' ESCAPED BY '\\'
-    SET snapshotid= @SNAPSHOT_ID
-;
-
-
-
-SELECT NOW() FROM DUAL;
+SELECT to_char(current_timestamp, 'DD/MM/YYYY HH24:MI:SS.MS');

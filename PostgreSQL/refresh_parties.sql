@@ -1,14 +1,18 @@
--- Truncate the PARTIES table
-TRUNCATE TABLE "PARTIES";
+TRUNCATE TABLE parties;
 
--- Get the maximum snapshotid value from the SNAPSHOTS table
-SELECT MAX(snapshotid) INTO @SNAPSHOT_ID FROM "SNAPSHOTS";
+SELECT to_char(current_timestamp, 'DD/MM/YYYY HH24:MI:SS.MS');
 
--- Get the current date and time
-SELECT NOW();
+\copy parties FROM 'parties.tsv' WITH (FORMAT csv, DELIMITER E'\t', NULL '', HEADER false, QUOTE '"', ESCAPE '\', FORCE_NULL ());
 
--- Load data from the 'parties.tsv' file into the PARTIES table
-COPY "PARTIES" FROM 'parties.tsv' DELIMITER E'\t' CSV HEADER;
+DO $$
+  DECLARE
+    snapshot_id INT;
+  BEGIN
+    SELECT MAX(snapshot_id) INTO snapshot_id FROM snapshots;
 
--- Get the current date and time again
-SELECT NOW();
+    UPDATE parties
+    SET snapshot_id = snapshot_id
+      WHERE snapshot_id IS NULL;
+  END $$;
+
+SELECT to_char(current_timestamp, 'DD/MM/YYYY HH24:MI:SS.MS');
