@@ -1,18 +1,32 @@
-TRUNCATE TABLE unclaimed_works;
+SET SCHEMA 'bwarm';
+CREATE PROCEDURE refresh_unclaimed_work_right_shares(IN p_file_path CHARACTER VARYING)
+  LANGUAGE plpgsql
+AS
+$$
+DECLARE
+  v_file VARCHAR;
+BEGIN
+  RAISE NOTICE 'Loading Unclaimed started : %', TO_CHAR(CURRENT_TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
 
-SELECT to_char(current_timestamp, 'DD/MM/YYYY HH24:MI:SS.MS');
+  TRUNCATE TABLE unclaimed_work_right_shares CASCADE;
+  v_file := CONCAT(p_file_path, 'unclaimedworkrightshares.tsv');
 
-\copy unclaimed_works FROM 'unclaimedworkrightshares.tsv' WITH (FORMAT csv, DELIMITER E'\t', NULL '', HEADER false, QUOTE '"', ESCAPE '\', FORCE_NULL ());
+  EXECUTE FORMAT('COPY unclaimed_work_right_shares (feed_providers_right_share_id,
+  feed_providers_recording_id,
+  feed_providers_work_id,
+  isrc,
+  dsp_recording_id,
+  recording_title,
+  recording_sub_title,
+  alternative_recording_title,
+  display_artist_name,
+  display_artist_isni,
+  duration,
+  unclaimed_percentage,
+  percentile_for_prioritisation) FROM ''%s'' WITH CSV DELIMITER E''\t'';', v_file);
 
-DO $$
-  DECLARE
-    snapshot_id INT;
-  BEGIN
-    SELECT MAX(snapshot_id) INTO snapshot_id FROM snapshots;
+  RAISE NOTICE 'Loading Unclaimed finished : %', TO_CHAR(CURRENT_TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
+END;
+$$;
+ALTER PROCEDURE refresh_unclaimed_work_right_shares(VARCHAR) OWNER TO postgres;
 
-    UPDATE unclaimed_works
-    SET snapshot_id = snapshot_id
-      WHERE snapshot_id IS NULL;
-  END $$;
-
-SELECT to_char(current_timestamp, 'DD/MM/YYYY HH24:MI:SS.MS');

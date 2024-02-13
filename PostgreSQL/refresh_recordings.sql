@@ -1,18 +1,33 @@
-TRUNCATE TABLE recordings;
+SET SCHEMA 'bwarm';
+CREATE PROCEDURE refresh_recordings(IN p_file_path CHARACTER VARYING)
+  LANGUAGE plpgsql
+AS
+$$
+DECLARE
+  v_file VARCHAR;
+BEGIN
+  RAISE NOTICE 'Loading Recordings started : %', TO_CHAR(CURRENT_TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
 
-SELECT to_char(current_timestamp, 'DD/MM/YYYY HH24:MI:SS.MS');
+  TRUNCATE TABLE recordings CASCADE;
+  v_file := CONCAT(p_file_path, 'recordings.tsv');
 
-\copy recordings FROM 'recordings.tsv' WITH (FORMAT csv, DELIMITER E'\t', NULL '', HEADER false, QUOTE '"', ESCAPE '\', FORCE_NULL ());
+  EXECUTE FORMAT('COPY recordings (feed_providers_recording_id,
+  isrc,
+  recording_title,
+  recording_sub_title,
+  display_artist_name,
+  display_artist_isni,
+  pline,
+  duration,
+  feed_providers_release_id,
+  studio_producer_name,
+  studio_producer_id,
+  original_data_provider_name,
+  original_data_provider_dpid,
+  is_data_provided_as_received) FROM ''%s'' WITH CSV DELIMITER E''\t'';', v_file);
 
-DO $$
-  DECLARE
-    snapshot_id INT;
-  BEGIN
-    SELECT MAX(snapshot_id) INTO snapshot_id FROM snapshots;
+  RAISE NOTICE 'Loading Recordings finished : %', TO_CHAR(CURRENT_TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
+END;
+$$;
+ALTER PROCEDURE refresh_recordings(VARCHAR) OWNER TO postgres;
 
-    UPDATE recordings
-    SET snapshot_id = snapshot_id
-      WHERE snapshot_id IS NULL;
-  END $$;
-
-SELECT to_char(current_timestamp, 'DD/MM/YYYY HH24:MI:SS.MS');

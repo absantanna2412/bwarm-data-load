@@ -1,18 +1,23 @@
-TRUNCATE TABLE work_identifiers;
+SET SCHEMA 'bwarm';
+CREATE PROCEDURE refresh_work_identifiers(IN p_file_path CHARACTER VARYING)
+  LANGUAGE plpgsql
+AS
+$$
+DECLARE
+  v_file VARCHAR;
+BEGIN
+  RAISE NOTICE 'Loading Work Identifiers started : %', TO_CHAR(CURRENT_TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
 
-SELECT to_char(current_timestamp, 'DD/MM/YYYY HH24:MI:SS.MS');
+  TRUNCATE TABLE work_identifiers CASCADE;
+  v_file := CONCAT(p_file_path, 'workidentifiers.tsv');
 
-\copy work_identifiers FROM 'workidentifiers.tsv' WITH (FORMAT csv, DELIMITER E'\t', NULL '', HEADER false, QUOTE '"', ESCAPE '\', FORCE_NULL ());
+  EXECUTE FORMAT('COPY work_identifiers (feed_providers_work_proprietary_identifier_id,
+  feed_providers_work_id,
+  identifier,
+  feed_providers_allocating_party_id) FROM ''%s'' WITH CSV DELIMITER E''\t'';', v_file);
 
-DO $$
-  DECLARE
-    snapshot_id INT;
-  BEGIN
-    SELECT MAX(snapshot_id) INTO snapshot_id FROM snapshots;
+  RAISE NOTICE 'Loading Work Identifiers finished : %', TO_CHAR(CURRENT_TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
+END;
+$$;
+ALTER PROCEDURE refresh_work_identifiers(VARCHAR) OWNER TO postgres;
 
-    UPDATE work_identifiers
-    SET snapshot_id = snapshot_id
-      WHERE snapshot_id IS NULL;
-  END $$;
-
-SELECT to_char(current_timestamp, 'DD/MM/YYYY HH24:MI:SS.MS');

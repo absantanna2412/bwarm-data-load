@@ -1,18 +1,23 @@
-TRUNCATE TABLE recording_identifiers;
+SET SCHEMA 'bwarm';
+CREATE PROCEDURE refresh_recording_identifiers(IN p_file_path CHARACTER VARYING)
+  LANGUAGE plpgsql
+AS
+$$
+DECLARE
+  v_file VARCHAR;
+BEGIN
+  RAISE NOTICE 'Loading Recording Identifiers started : %', TO_CHAR(CURRENT_TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
 
-SELECT to_char(current_timestamp, 'DD/MM/YYYY HH24:MI:SS.MS');
+  TRUNCATE TABLE recording_identifiers CASCADE;
+  v_file := CONCAT(p_file_path, 'recordingidentifiers.tsv');
 
-\copy recording_identifiers FROM 'recordingidentifiers.tsv' WITH (FORMAT csv, DELIMITER E'\t', NULL '', HEADER false, QUOTE '"', ESCAPE '\', FORCE_NULL ());
+  EXECUTE FORMAT('COPY recording_identifiers (feed_providers_recording_proprietary_identifier_id,
+  feed_providers_recording_id,
+  identifier,
+  feed_providers_allocating_party_id) FROM ''%s'' WITH CSV DELIMITER E''\t'';', v_file);
 
-DO $$
-  DECLARE
-    snapshot_id INT;
-  BEGIN
-    SELECT MAX(snapshot_id) INTO snapshot_id FROM snapshots;
+  RAISE NOTICE 'Loading Recording Identifiers finished : %', TO_CHAR(CURRENT_TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
+END;
+$$;
+ALTER PROCEDURE refresh_recording_identifiers(VARCHAR) OWNER TO postgres;
 
-    UPDATE recording_identifiers
-    SET snapshot_id = snapshot_id
-      WHERE snapshot_id IS NULL;
-  END $$;
-
-SELECT to_char(current_timestamp, 'DD/MM/YYYY HH24:MI:SS.MS');
