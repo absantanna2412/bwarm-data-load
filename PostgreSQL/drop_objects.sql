@@ -1,0 +1,39 @@
+-- Lets drop the constraints to increase loading performance
+
+alter table bwarm.parties drop constraint parties_snapshot_id_fkey;
+alter table bwarm.recording_alternative_titles drop constraint recording_alternative_titles_feed_providers_recording_id_fkey;
+alter table bwarm.recording_alternative_titles drop constraint recording_alternative_titles_snapshot_id_fkey;
+alter table bwarm.recording_identifiers drop constraint recording_identifiers_feed_providers_recording_id_fkey;
+alter table bwarm.recording_identifiers drop constraint recording_identifiers_snapshot_id_fkey;
+alter table bwarm.recordings drop constraint recordings_feed_providers_release_id_fkey;
+alter table bwarm.recordings drop constraint recordings_snapshot_id_fkey;
+alter table bwarm.release_identifiers drop constraint release_identifiers_feed_providers_release_id_fkey;
+alter table bwarm.release_identifiers drop constraint release_identifiers_snapshot_id_fkey;
+alter table bwarm.releases drop constraint releases_snapshot_id_fkey;
+alter table bwarm.unclaimed_work_right_shares drop constraint unclaimed_work_right_shares_feed_providers_recording_id_fkey;
+alter table bwarm.unclaimed_work_right_shares drop constraint unclaimed_work_right_shares_feed_providers_work_id_fkey;
+alter table bwarm.unclaimed_work_right_shares drop constraint unclaimed_work_right_shares_snapshot_id_fkey;
+alter table bwarm.work_alternative_titles drop constraint work_alternative_titles_feed_providers_work_id_fkey;
+alter table bwarm.work_alternative_titles drop constraint work_alternative_titles_snapshot_id_fkey;
+alter table bwarm.work_identifiers drop constraint work_identifiers_feed_providers_work_id_fkey;
+alter table bwarm.work_identifiers drop constraint work_identifiers_snapshot_id_fkey;
+alter table bwarm.work_recordings drop constraint work_recordings_feed_providers_work_id_fkey;
+alter table bwarm.work_recordings drop constraint work_recordings_feed_providers_recording_id_fkey;
+alter table bwarm.work_recordings drop constraint work_recordings_snapshot_id_fkey;
+alter table bwarm.work_right_shares drop constraint work_right_shares_feed_providers_work_id_fkey;
+alter table bwarm.work_right_shares drop constraint work_right_shares_feed_providers_party_id_fkey;
+alter table bwarm.work_right_shares drop constraint work_right_shares_snapshot_id_fkey;
+alter table bwarm.works drop constraint works_snapshot_id_fkey;
+
+alter table bwarm.parties drop constraint parties_pkey;
+alter table bwarm.release_identifiers drop constraint release_identifiers_pkey;
+alter table bwarm.releases drop constraint releases_pkey;
+alter table bwarm.recording_alternative_titles drop constraint recording_alternative_titles_pkey;
+alter table bwarm.recording_identifiers drop constraint recording_identifiers_pkey;
+alter table bwarm.recordings drop constraint recordings_pkey;
+alter table bwarm.unclaimed_work_right_shares drop constraint unclaimed_work_right_shares_pkey;
+alter table bwarm.work_alternative_titles drop constraint work_alternative_titles_pkey;
+alter table bwarm.work_identifiers drop constraint work_identifiers_pkey;
+alter table bwarm.work_recordings drop constraint work_recordings_pkey;
+alter table bwarm.work_right_shares drop constraint work_right_shares_pkey;
+alter table bwarm.works drop constraint works_pkey;

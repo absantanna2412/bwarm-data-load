@@ -1,7 +1,7 @@
 # PostgreSQL
-Load Scripts to PostgreSQL from locally stored files, if you need server stored files udate the scripts changing \copy by COPY.
+Load Scripts to PostgreSQL from serve stored files, if you need local stored files update the scripts changing COPY by \copy.
 
-_Bulk insert using \copy (for client-side execution) or COPY (for server-side execution)_
+_Bulk insert using COPY (for server-side execution) or \copy (for client-side execution)_
 
 PostgreSQL is case-sensitive for table names and field names. By default, PostgreSQL converts unquoted identifiers (including table and column names) to lowercase. This means that if you create a table or a column with uppercase letters without quoting them, PostgreSQL will store them in lowercase.
 

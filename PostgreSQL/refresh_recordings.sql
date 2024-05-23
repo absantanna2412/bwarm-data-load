@@ -1,12 +1,12 @@
 SET SCHEMA 'bwarm';
-CREATE PROCEDURE refresh_recordings(IN p_file_path CHARACTER VARYING)
+CREATE OR REPLACE PROCEDURE refresh_recordings(IN p_file_path CHARACTER VARYING)
   LANGUAGE plpgsql
 AS
 $$
 DECLARE
   v_file VARCHAR;
 BEGIN
-  RAISE NOTICE 'Loading Recordings started : %', TO_CHAR(CURRENT_TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
+  RAISE NOTICE 'Loading Recordings started : %', TO_CHAR(TIMEOFDAY()::TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
 
   TRUNCATE TABLE recordings CASCADE;
   v_file := CONCAT(p_file_path, 'recordings.tsv');
@@ -26,7 +26,7 @@ BEGIN
   original_data_provider_dpid,
   is_data_provided_as_received) FROM ''%s'' WITH CSV DELIMITER E''\t'';', v_file);
 
-  RAISE NOTICE 'Loading Recordings finished : %', TO_CHAR(CURRENT_TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
+  RAISE NOTICE 'Loading Recordings finished : %', TO_CHAR(TIMEOFDAY()::TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
 END;
 $$;
 ALTER PROCEDURE refresh_recordings(VARCHAR) OWNER TO postgres;

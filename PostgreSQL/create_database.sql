@@ -1,3 +1,5 @@
+SET SCHEMA 'bwarm';
+
 -- Drop refresh procedures if tey exists
 DROP PROCEDURE IF EXISTS refresh_unclaimed_work_right_shares;
 DROP PROCEDURE IF EXISTS refresh_work_recordings;
@@ -146,8 +148,8 @@ CREATE TABLE work_right_shares
     right_share_percentage                    REAL,
     right_share_type                          VARCHAR(100),
     rights_type                               VARCHAR(100),
-    validity_start_date                       VARCHAR(10),
-    validity_end_date                         VARCHAR(10),
+    validity_start_date                       VARCHAR(100),
+    validity_end_date                         VARCHAR(100),
     feed_providers_parent_work_right_share_id VARCHAR(900),
     territory_code                            VARCHAR(900),
     use_type                                  VARCHAR(900),
@@ -158,18 +160,53 @@ CREATE TRIGGER work_right_shares_tr
   FOR EACH ROW
 EXECUTE PROCEDURE get_snapshot_id();
 
+-- Releases table and snapshot trigger
+CREATE TABLE releases
+  (
+    feed_providers_release_id    VARCHAR(900) PRIMARY KEY,
+    icpn                         VARCHAR(100),
+    release_title                TEXT,
+    release_sub_title            TEXT,
+    display_artist_name          TEXT,
+    display_artist_isni          VARCHAR(100),
+    label_name                   VARCHAR(900),
+    release_date                 VARCHAR(100),
+    original_data_provider_name  VARCHAR(900),
+    original_data_provider_dpid  VARCHAR(900),
+    is_data_provided_as_received VARCHAR(6),
+    snapshot_id                  INTEGER REFERENCES snapshots (snapshot_id));
+CREATE TRIGGER releases_tr
+  BEFORE INSERT
+  ON releases
+  FOR EACH ROW
+EXECUTE PROCEDURE get_snapshot_id();
+
+-- Release Identifiers table and snapshot trigger
+CREATE TABLE release_identifiers
+  (
+    feed_providers_release_proprietary_identifier_id VARCHAR(900) PRIMARY KEY,
+    feed_providers_release_id                        VARCHAR(900) REFERENCES releases (feed_providers_release_id),
+    identifier                                       VARCHAR(900),
+    feed_providers_allocating_party_id               VARCHAR(900),
+    snapshot_id                                      INTEGER REFERENCES snapshots (snapshot_id));
+CREATE TRIGGER release_identifiers_tr
+  BEFORE INSERT
+  ON release_identifiers
+  FOR EACH ROW
+EXECUTE PROCEDURE get_snapshot_id();
+
 -- Recordings table and snapshot trigger
 CREATE TABLE recordings
   (
     feed_providers_recording_id  VARCHAR(900) PRIMARY KEY,
-    isrc                         VARCHAR(12),
+    isrc                         VARCHAR(100),
     recording_title              TEXT,
     recording_sub_title          TEXT,
     display_artist_name          TEXT,
-    display_artist_isni          VARCHAR(16),
+    display_artist_isni          VARCHAR(100),
     pline                        VARCHAR(900),
     duration                     VARCHAR(100),
-    feed_providers_release_id    VARCHAR(900),
+    feed_providers_release_id    VARCHAR(900) REFERENCES releases (feed_providers_release_id),
     studio_producer_name         TEXT,
     studio_producer_id           VARCHAR(900),
     original_data_provider_name  VARCHAR(900),
@@ -211,41 +248,6 @@ CREATE TRIGGER recording_identifiers_tr
   FOR EACH ROW
 EXECUTE PROCEDURE get_snapshot_id();
 
--- Releases table and snapshot trigger
-CREATE TABLE releases
-  (
-    feed_providers_release_id    VARCHAR(900) PRIMARY KEY,
-    icpn                         VARCHAR(15),
-    release_title                TEXT,
-    release_sub_title            TEXT,
-    display_artist_name          TEXT,
-    display_artist_isni          VARCHAR(16),
-    label_name                   VARCHAR(900),
-    release_date                 VARCHAR(10),
-    original_data_provider_name  VARCHAR(900),
-    original_data_provider_dpid  VARCHAR(900),
-    is_data_provided_as_received VARCHAR(6),
-    snapshot_id                  INTEGER REFERENCES snapshots (snapshot_id));
-CREATE TRIGGER releases_tr
-  BEFORE INSERT
-  ON releases
-  FOR EACH ROW
-EXECUTE PROCEDURE get_snapshot_id();
-
--- Release Identifiers table and snapshot trigger
-CREATE TABLE release_identifiers
-  (
-    feed_providers_release_proprietary_identifier_id VARCHAR(900) PRIMARY KEY,
-    feed_providers_release_id                        VARCHAR(900) REFERENCES releases (feed_providers_release_id),
-    identifier                                       VARCHAR(900),
-    feed_providers_allocating_party_id               VARCHAR(900),
-    snapshot_id                                      INTEGER REFERENCES snapshots (snapshot_id));
-CREATE TRIGGER release_identifiers_tr
-  BEFORE INSERT
-  ON release_identifiers
-  FOR EACH ROW
-EXECUTE PROCEDURE get_snapshot_id();
-
 -- Work Recordings table and snapshot trigger
 CREATE TABLE work_recordings
   (
@@ -265,13 +267,13 @@ CREATE TABLE unclaimed_work_right_shares
     feed_providers_right_share_id VARCHAR(900) PRIMARY KEY,
     feed_providers_recording_id   VARCHAR(900) REFERENCES recordings (feed_providers_recording_id),
     feed_providers_work_id        VARCHAR(900) REFERENCES works (feed_providers_work_id),
-    isrc                          VARCHAR(11),
+    isrc                          VARCHAR(100),
     dsp_recording_id              VARCHAR(900),
     recording_title               TEXT,
     recording_sub_title           TEXT,
     alternative_recording_title   TEXT,
     display_artist_name           TEXT,
-    display_artist_isni           VARCHAR(16),
+    display_artist_isni           VARCHAR(100),
     duration                      VARCHAR(100),
     unclaimed_percentage          REAL,
     percentile_for_prioritisation INTEGER,

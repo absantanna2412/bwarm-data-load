@@ -1,5 +1,5 @@
 SET SCHEMA 'bwarm';
-INSERT INTO snapshots (created_date) VALUES (current_timestamp);
+--INSERT INTO snapshots (created_date) VALUES (current_timestamp);
 
 CALL refresh_parties('/opt/bwarm/');
 CALL refresh_works('/opt/bwarm/');

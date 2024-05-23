@@ -16,7 +16,7 @@ DROP TABLE IF EXISTS [dbo].[UNCLAIMED_WORKS];
 CREATE TABLE [dbo].[SNAPSHOTS] (
     [snapshotid] [int] IDENTITY(1,1) NOT NULL,
     [created_date] [datetime],
-    CONSTRAINT [PK_snapshotid] PRIMARY KEY CLUSTERED 
+    CONSTRAINT [PK_snapshotid] PRIMARY KEY CLUSTERED
         (
 	        [snapshotid] ASC
         )
@@ -35,7 +35,7 @@ CREATE TABLE [dbo].[WORKS] (
     [AlternativeWorkForUsStatutoryReversion] [varchar](900),
     [UsStatutoryReversionDate] [varchar](100),
     [snapshotid] [int],
-    CONSTRAINT [PK_FeedProvidersWorkId] PRIMARY KEY CLUSTERED 
+    CONSTRAINT [PK_FeedProvidersWorkId] PRIMARY KEY CLUSTERED
         (
 	        [FeedProvidersWorkId] ASC
         )
@@ -48,7 +48,7 @@ CREATE TABLE [dbo].[ALTERNATIVE_WORK_TITLES] (
     [LanguageAndScriptCode] [varchar](900),
     [TitleType] [varchar](900),
     [snapshotid] [int],
-    CONSTRAINT [PK_FeedProvidersWorkAlternativeTitleId] PRIMARY KEY CLUSTERED 
+    CONSTRAINT [PK_FeedProvidersWorkAlternativeTitleId] PRIMARY KEY CLUSTERED
         (
 	        [FeedProvidersWorkAlternativeTitleId] ASC
         )
@@ -60,7 +60,7 @@ CREATE TABLE [dbo].[WORK_IDENTIFIERS] (
     [Identifier] [varchar](900),
     [FeedProvidersAllocatingPartyId] [varchar](900),
     [snapshotid] [int],
-    CONSTRAINT [PK_FeedProvidersWorkProprietaryIdentifierId] PRIMARY KEY CLUSTERED 
+    CONSTRAINT [PK_FeedProvidersWorkProprietaryIdentifierId] PRIMARY KEY CLUSTERED
         (
 	        [FeedProvidersWorkProprietaryIdentifierId] ASC
         )
@@ -77,7 +77,7 @@ CREATE TABLE [dbo].[PARTIES] (
     [KeyName] [varchar](max),
     [NamesAfterKeyName] [varchar](max),
     [snapshotid] [int]
-    CONSTRAINT [PK_FeedProvidersPartyId] PRIMARY KEY CLUSTERED 
+    CONSTRAINT [PK_FeedProvidersPartyId] PRIMARY KEY CLUSTERED
         (
 	        [FeedProvidersPartyId] ASC
         )
@@ -88,16 +88,16 @@ CREATE TABLE [dbo].[WORK_RIGHT_SHARES] (
     [FeedProvidersWorkId] [VARCHAR](900),
     [FeedProvidersPartyId] [VARCHAR](900),
     [PartyRole] [VARCHAR](100),
-    [RightSharePercentage] [FLOAT], 
+    [RightSharePercentage] [FLOAT],
     [RightShareType] [VARCHAR](100),
     [RightsType] [VARCHAR](100),
-    [ValidityStartDate] [VARCHAR](10),
-    [ValidityEndDate] [VARCHAR](10),
+    [ValidityStartDate] [VARCHAR](100),
+    [ValidityEndDate] [VARCHAR](100),
     [FeedProvidersParentWorkRightShareId] [VARCHAR](900),
     [TerritoryCode] [VARCHAR](900),
     [UseType] [VARCHAR](900),
     [snapshotid] [INT],
-    CONSTRAINT [PK_FeedProvidersWorkRightShareId] PRIMARY KEY CLUSTERED 
+    CONSTRAINT [PK_FeedProvidersWorkRightShareId] PRIMARY KEY CLUSTERED
         (
 	        [FeedProvidersWorkRightShareId] ASC
         )
@@ -106,20 +106,20 @@ CREATE TABLE [dbo].[WORK_RIGHT_SHARES] (
 CREATE TABLE [dbo].[RECORDINGS] (
     [FeedProvidersRecordingId] [VARCHAR](900),
     [ISRC] [VARCHAR](12),
-    [RecordingTitle] [varchar](max), 
-    [RecordingSubTitle] [varchar](max), 
-    [DisplayArtistName] [varchar](max), 
+    [RecordingTitle] [varchar](max),
+    [RecordingSubTitle] [varchar](max),
+    [DisplayArtistName] [varchar](max),
     [DisplayArtistISNI] [VARCHAR](16),
     [PLine] [VARCHAR](900),
     [Duration]  [VARCHAR](100),
     [FeedProvidersReleaseId] [VARCHAR](900),
-    [StudioProducerName] [varchar](max), 
+    [StudioProducerName] [varchar](max),
     [StudioProducerId] [VARCHAR](900),
     [OriginalDataProviderName] [VARCHAR](900),
     [OriginalDataProviderDPID] [VARCHAR](900),
     [IsDataProvidedAsReceived] [VARCHAR](6),
     [snapshotid] [INT],
-    CONSTRAINT [PK_FeedProvidersRecordingId] PRIMARY KEY CLUSTERED 
+    CONSTRAINT [PK_FeedProvidersRecordingId] PRIMARY KEY CLUSTERED
         (
 	        [FeedProvidersRecordingId] ASC
         )
@@ -132,7 +132,7 @@ CREATE TABLE [dbo].[ALTERNATIVE_RECORDING_TITLES] (
     [LanguageAndScriptCode] [VARCHAR](900),
     [TitleType] [VARCHAR](900),
     [snapshotid] [INT],
-    CONSTRAINT [PK_FeedProvidersRecordingAlternativeTitleId] PRIMARY KEY CLUSTERED 
+    CONSTRAINT [PK_FeedProvidersRecordingAlternativeTitleId] PRIMARY KEY CLUSTERED
         (
 	        [FeedProvidersRecordingAlternativeTitleId] ASC
         )
@@ -144,7 +144,7 @@ CREATE TABLE [dbo].[RECORDING_IDENTIFIERS] (
     [Identifier] [VARCHAR](900),
     [FeedProvidersAllocatingPartyId] [VARCHAR](900),
     [snapshotid] [INT],
-    CONSTRAINT [PK_FeedProvidersRecordingProprietaryIdentifierId] PRIMARY KEY CLUSTERED 
+    CONSTRAINT [PK_FeedProvidersRecordingProprietaryIdentifierId] PRIMARY KEY CLUSTERED
         (
 	        [FeedProvidersRecordingProprietaryIdentifierId] ASC
         )
@@ -152,18 +152,18 @@ CREATE TABLE [dbo].[RECORDING_IDENTIFIERS] (
 
 CREATE TABLE [dbo].[RELEASES] (
     [FeedProvidersReleaseId] [VARCHAR](900),
-    [ICPN] [VARCHAR](15),
+    [ICPN] [VARCHAR](100),
     [ReleaseTitle] [VARCHAR](MAX),
     [ReleaseSubTitle] [VARCHAR](MAX),
     [DisplayArtistName] [VARCHAR](MAX),
     [DisplayArtistISNI] [VARCHAR](16),
     [LabelName] [VARCHAR](900),
-    [ReleaseDate] [VARCHAR](10),
+    [ReleaseDate] [VARCHAR](100),
     [OriginalDataProviderName] [VARCHAR](900),
     [OriginalDataProviderDPID] [VARCHAR](900),
     [IsDataProvidedAsReceived] [VARCHAR](6),
     [snapshotid] [INT],
-    CONSTRAINT [PK_FeedProvidersReleaseId] PRIMARY KEY CLUSTERED 
+    CONSTRAINT [PK_FeedProvidersReleaseId] PRIMARY KEY CLUSTERED
         (
 	        [FeedProvidersReleaseId] ASC
         )
@@ -175,7 +175,7 @@ CREATE TABLE [dbo].[RELEASE_IDENTIFIERS] (
     [Identifier] [VARCHAR](900),
     [FeedProvidersAllocatingPartyId] [VARCHAR](900),
     [snapshotid] [INT],
-    CONSTRAINT [PK_FeedProvidersReleaseProprietaryIdentifierId] PRIMARY KEY CLUSTERED 
+    CONSTRAINT [PK_FeedProvidersReleaseProprietaryIdentifierId] PRIMARY KEY CLUSTERED
         (
 	        [FeedProvidersReleaseProprietaryIdentifierId] ASC
         )
@@ -186,7 +186,7 @@ CREATE TABLE [dbo].[WORK_RECORDINGS] (
     [FeedProvidersWorkId] [VARCHAR](900),
     [FeedProvidersRecordingId] [VARCHAR](900),
     [snapshotid] [INT],
-    CONSTRAINT [PK_FeedProvidersLinkId] PRIMARY KEY CLUSTERED 
+    CONSTRAINT [PK_FeedProvidersLinkId] PRIMARY KEY CLUSTERED
         (
 	        [FeedProvidersLinkId] ASC
         )
@@ -196,18 +196,18 @@ CREATE TABLE [dbo].[UNCLAIMED_WORKS] (
     [FeedProvidersRightShareId] [VARCHAR](900),
     [FeedProvidersRecordingId] [VARCHAR](900),
     [FeedProvidersWorkId] [VARCHAR](900),
-    [ISRC]  [VARCHAR](11),
+    [ISRC]  [VARCHAR](100),
     [DspRecordingId]  [VARCHAR](900),
     [RecordingTitle] [VARCHAR](MAX),
     [RecordingSubTitle] [VARCHAR](MAX),
     [AlternativeRecordingTitle] [VARCHAR](MAX),
     [DisplayArtistName] [VARCHAR](MAX),
-    [DisplayArtistISNI] [VARCHAR](16),
+    [DisplayArtistISNI] [VARCHAR](100),
     [Duration] [VARCHAR](100),
     [UnclaimedPercentage] [FLOAT],
     [PercentileForPrioritisation] [INT],
     [snapshotid] [INT],
-    CONSTRAINT [PK_FeedProvidersRightShareId] PRIMARY KEY CLUSTERED 
+    CONSTRAINT [PK_FeedProvidersRightShareId] PRIMARY KEY CLUSTERED
         (
 	        [FeedProvidersRightShareId] ASC
         )

@@ -1,12 +1,12 @@
 SET SCHEMA 'bwarm';
-CREATE PROCEDURE refresh_parties(IN p_file_path CHARACTER VARYING)
+CREATE OR REPLACE PROCEDURE refresh_parties(IN p_file_path CHARACTER VARYING)
   LANGUAGE plpgsql
 AS
 $$
 DECLARE
   v_file VARCHAR;
 BEGIN
-  RAISE NOTICE 'Loading Parties started : %', TO_CHAR(CURRENT_TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
+  RAISE NOTICE 'Loading Parties started : %', TO_CHAR(TIMEOFDAY()::TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
 
   TRUNCATE TABLE parties CASCADE;
   v_file := CONCAT(p_file_path, 'parties.tsv');
@@ -26,7 +26,7 @@ BEGIN
   contact_address,
   no_valid_contact_information_avaliable) FROM ''%s'' WITH CSV DELIMITER E''\t'';', v_file);
 
-  RAISE NOTICE 'Loading Parties finished : %', TO_CHAR(CURRENT_TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
+  RAISE NOTICE 'Loading Parties finished : %', TO_CHAR(TIMEOFDAY()::TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
 END;
 $$;
 ALTER PROCEDURE refresh_parties(VARCHAR) OWNER TO postgres;

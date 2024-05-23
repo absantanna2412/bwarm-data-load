@@ -1,12 +1,12 @@
 SET SCHEMA 'bwarm';
-CREATE PROCEDURE refresh_recording_identifiers(IN p_file_path CHARACTER VARYING)
+CREATE OR REPLACE PROCEDURE refresh_recording_identifiers(IN p_file_path CHARACTER VARYING)
   LANGUAGE plpgsql
 AS
 $$
 DECLARE
   v_file VARCHAR;
 BEGIN
-  RAISE NOTICE 'Loading Recording Identifiers started : %', TO_CHAR(CURRENT_TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
+  RAISE NOTICE 'Loading Recording Identifiers started : %', TO_CHAR(TIMEOFDAY()::TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
 
   TRUNCATE TABLE recording_identifiers CASCADE;
   v_file := CONCAT(p_file_path, 'recordingidentifiers.tsv');
@@ -16,7 +16,7 @@ BEGIN
   identifier,
   feed_providers_allocating_party_id) FROM ''%s'' WITH CSV DELIMITER E''\t'';', v_file);
 
-  RAISE NOTICE 'Loading Recording Identifiers finished : %', TO_CHAR(CURRENT_TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
+  RAISE NOTICE 'Loading Recording Identifiers finished : %', TO_CHAR(TIMEOFDAY()::TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
 END;
 $$;
 ALTER PROCEDURE refresh_recording_identifiers(VARCHAR) OWNER TO postgres;

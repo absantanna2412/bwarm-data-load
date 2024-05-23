@@ -1,12 +1,12 @@
 SET SCHEMA 'bwarm';
-CREATE PROCEDURE refresh_recording_alternative_titles(IN p_file_path CHARACTER VARYING)
+CREATE OR REPLACE PROCEDURE refresh_recording_alternative_titles(IN p_file_path CHARACTER VARYING)
   LANGUAGE plpgsql
 AS
 $$
 DECLARE
   v_file VARCHAR;
 BEGIN
-  RAISE NOTICE 'Loading Alternative Recording Titles started : %', TO_CHAR(CURRENT_TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
+  RAISE NOTICE 'Loading Alternative Recording Titles started : %', TO_CHAR(TIMEOFDAY()::TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
 
   TRUNCATE TABLE recording_alternative_titles CASCADE;
   v_file := CONCAT(p_file_path, 'recordingalternativetitles.tsv');
@@ -17,7 +17,7 @@ BEGIN
   language_and_script_code,
   title_type) FROM ''%s'' WITH CSV DELIMITER E''\t'';', v_file);
 
-  RAISE NOTICE 'Loading Alternative Recording Titles finished : %', TO_CHAR(CURRENT_TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
+  RAISE NOTICE 'Loading Alternative Recording Titles finished : %', TO_CHAR(TIMEOFDAY()::TIMESTAMP, 'DD/MM/YYYY HH24:MI:SS.MS');
 END;
 $$;
 ALTER PROCEDURE refresh_recording_alternative_titles(VARCHAR) OWNER TO postgres;
